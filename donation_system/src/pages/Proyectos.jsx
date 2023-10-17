@@ -1,0 +1,260 @@
+import { useEffect, useState, useRef } from "react";
+
+export const Proyectos = () => {
+    const ENDPOINT = "http://localhost:4000/proyectos";
+
+    const [proyectos, setProyectos] = useState([])
+    const dialogRef = useRef(null)
+    const dialogDeleteRef = useRef(null)
+    const [currentProyecto, setCurrentProyecto] = useState ({
+        ProyectoID: 0,
+        NombreProyecto: '',
+        DescripcionProyecto: '',
+        EmpleadoID: '',
+        NombreEmpleado: '',
+        ApellidoEmpleado: '',
+        MetaTotal: '',
+        EstadoProyecto: '',
+    })
+
+    const getAll = async () => {
+        let fetchResp = await fetch(ENDPOINT)
+        let dataJson = await fetchResp.json()
+        setProyectos(dataJson)
+    }
+
+    useEffect(() => {
+        //useEffect vacio, significa que lo va ejecutar cuando se cargue el componente en memoria.
+        (async () => {
+            await getAll()
+        })()
+      }, [])
+
+    const newDonacionClick = (e) => {
+        e.preventDefault()
+        dialogRef.current.showModal()
+    }
+
+    const closeNewDonacionModal = (e) => {
+        e.preventDefault()
+        dialogRef.current.close()
+    }
+
+    const valueHasChanged = (e) => {
+        setCurrentProyecto({
+          ...currentProyecto,
+          [e.target.name]: e.target.value,
+        })
+    }
+
+    const formSubmit = async (e) => {
+        e.preventDefault();
+        if (currentProyecto.ProyectoID <= 0) {
+            // Create
+            await postData(currentProyecto);
+        } else {
+            // Update
+            await updateData(currentProyecto);
+        }
+        setCurrentProyecto({
+            ProyectoID: 0,
+            NombreProyecto: '',
+            DescripcionProyecto: '',
+            EmpleadoID: '',
+            NombreEmpleado: '',
+            ApellidoEmpleado: '',
+            MetaTotal: '',
+            EstadoProyecto: '',
+        });
+        dialogRef.current.close();
+    }
+
+    const postData = async (data) => {
+        let fetchResp = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+          })
+          let json = await fetchResp.json()
+          await getAll()
+    }
+
+    const updateData = async (data) => {
+        let fetchResp = await fetch(ENDPOINT + "/" + data.ProyectoID, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+        let json = await fetchResp.json();
+        await getAll();
+    }
+    
+
+    const deleteRow = async (row)=>{
+        setCurrentProyecto(row)
+        dialogDeleteRef.current.showModal()
+    }
+
+    const deleteData = async (row) => {
+        let fetchResp = await fetch(ENDPOINT + "/" + row.ProyectoID, {
+          method: "DELETE",
+          headers: {
+              "Content-Type": "application/json"
+          }
+        });
+        let json = await fetchResp.json();
+        await getAll();
+    }
+    
+    const confirmDelete = async(e)=>{
+        e.preventDefault();
+        await deleteData(currentProyecto)
+        dialogDeleteRef.current.close()
+    }
+
+    const showEdit = (row) => {
+        setCurrentProyecto(row); // Establece los valores del proyecto a editar
+        dialogRef.current.showModal();
+    }
+
+    return (
+        <>
+            <dialog ref={dialogRef}>
+                <h4>Nuevo Proyecto</h4>
+                <form onSubmit={formSubmit} className="w3-container">
+                <label htmlFor="nombreProyecto">NombreProyecto</label>
+                <input
+                    type="text"
+                    id="NombreProyecto"
+                    name="NombreProyecto"
+                    className="w3-input"
+                    value={currentProyecto.NombreProyecto}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor="descripcionProyecto">DescripcionProyecto</label>
+                <input
+                    type="text"
+                    id="DescripcionProyecto"
+                    name="DescripcionProyecto"
+                    className="w3-input"
+                    value={currentProyecto.DescripcionProyecto}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor="empleadoID">EmpleadoID</label>
+                <input
+                    type="text"
+                    id="EmpleadoID"
+                    name="EmpleadoID"
+                    className="w3-input"
+                    value={currentProyecto.EmpleadoID}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor="nombre">Nombre</label>
+                <input
+                    type="text"
+                    id="NombreEmpleado"
+                    name="NombreEmpleado"
+                    className="w3-input"
+                    value={currentProyecto.NombreEmpleado}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor="apellido">Apellido</label>
+                <input
+                    type="text"
+                    id="ApellidoEmpleado"
+                    name="ApellidoEmpleado"
+                    className="w3-input"
+                    value={currentProyecto.ApellidoEmpleado}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor="metaTotal">MetaTotal</label>
+                <input
+                    type="text"
+                    id="MetaTotal"
+                    name="MetaTotal"
+                    className="w3-input"
+                    value={currentProyecto.MetaTotal}
+                    onChange={valueHasChanged}
+                />
+                <label htmlFor='estadoProyecto'>Estado</label>
+                    <select
+                        className='w3-select'
+                        name="EstadoProyecto" // Asegúrate de que coincida con el nombre en currentProyecto
+                        id="estadoProyecto"
+                        value={currentProyecto.EstadoProyecto}
+                        onChange={valueHasChanged}
+                        >
+                            <option value="">Seleccione</option>
+                            <option value="Inactivo">Inactivo</option>
+                            <option value="Activo">Activo</option>
+                    </select>
+                <div className="w3-row">
+                    <div className="w3-col m4">
+                    <button type="submit" className="w3-button w3-green">Guardar</button>         
+                    </div>
+                    <div className="w3-col m4">
+                    <button className="w3-button w3-red" onClick={closeNewDonacionModal}>Cerrar</button>
+                    </div>
+                </div>
+                </form>
+            </dialog>
+            <button onClick={newDonacionClick}>Nuevo Proyecto</button>
+            <h1>Proyectos</h1>
+            <table className="w3-table w3-striped w3-bordered w3-border">
+                <thead>
+                <tr>
+                    <th>ProyectoID</th>
+                    <th>NombreProyecto</th>
+                    <th>DescripcionProyecto</th>
+                    <th>EmpleadoID</th>
+                    <th>NombreEmpleado</th>
+                    <th>ApellidoEmpleado</th>
+                    <th>MetaTotal</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody>
+                {proyectos.map((row) => (
+                    <tr key={'donacion' + row.id} style={{backgroundColor: row.EstadoProyecto === "I" ? "olive": ""}}>
+                    <td>{row.ProyectoID}</td>
+                    <td>{row.NombreProyecto}</td>
+                    <td>{row.DescripcionProyecto}</td>
+                    <td>{row.EmpleadoID}</td>
+                    <td>{row.NombreEmpleado}</td>
+                    <td>{row.ApellidoEmpleado}</td>
+                    <td>{row.MetaTotal}</td>
+                    <td>{row.EstadoProyecto}</td>
+                    <td>
+                        <button className="w3-button w3-yellow" onClick = {(e) => { showEdit(row) }}>Editar</button>
+                        <button className="w3-button w3-red" onClick = {(e)=> {deleteRow(row)}}>Borrar</button>
+                    </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+
+            <dialog ref={dialogDeleteRef}>
+                <h4>Confirmación de borrado</h4>
+                <form onSubmit={confirmDelete} className="w3-container">
+                
+                    Esta seguro que desea eliminar el proyecto {currentProyecto.Nombre}
+                    <div className='w3-row'>
+                    <div className='w3-col m6'>
+                        <button className="w3-button w3-red" type="submit">Confirmar</button>
+                    </div>
+                    <div className='w3-col m6'>
+                        <button className="w3-button w3-blue" onClick={(e)=>{
+                        e.preventDefault()
+                        dialogDeleteRef.current.close()
+                        }} >Cancelar</button>
+                    </div>
+                    </div>
+                </form>
+            </dialog>
+            </>
+    )
+}

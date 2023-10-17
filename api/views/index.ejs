@@ -3,9 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Localhost Express</title>
+  <title>Donation System</title>
 </head>
 <body>
-  <h1>Bienvenido a Express!</h1>
+  <h1>Bienvenido a Donation System</h1>
+  <form id="form">
+    <label>EmpleadoID</label>
+    <input type="text" name="EmpleadoID" id="EmpleadoID"/>
+    <label>Nombre</label>
+    <input type="text" name="Nombre" id="Nombre"/>
+    <label>Estado del Proyecto</label>
+    <input type="text" name="EstadoProyecto" id="EstadoProyecto">
+    
+    <input type="submit" value="Guardar"/>
+  </form>
+
+  <div id="container">
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async ()=>{
+       await crearTablaFormaInsegura()
+    })
+
+    async function crearTablaFormaInsegura() {
+      let respuesta = await fetch("/proyectos")
+      let datosJson = await respuesta.json()
+      let table = `<table border = 1>
+                     <thead>
+                         <tr>
+                             <td>ProyectoID</td>
+                             <td>EmpleadoID</td>
+                             <td>Nombre</td>
+                             <td>EstadoProyecto</td>
+                          </tr>
+                     </thead>
+                     <tbody>`;
+       datosJson.forEach(row=>{
+         table += "<tr>";
+         Object.keys(row).forEach(k => {
+           table += `<td>${row[k]}</td>`
+         })
+         table += "</tr>"
+       })                
+       table += "</tbody></table>"
+       document.getElementById("container").innerHTML = table
+      
+    }
+     async function dibujarTablaMetodoSeguro() {
+       let data = await fetch("/proyectos")
+         let dataInJson = await data.json()
+         let table = document.createElement("table")
+         table.border = 1
+         let tr = document.createElement("tr")
+         let td = {}
+
+         Object.keys(dataInJson[0]).forEach(k => {
+           td = document.createElement("td")
+           td.innerText = k 
+           tr.appendChild(td)
+         })
+         table.appendChild(tr)
+         dataInJson.forEach(row => {
+           tr = document.createElement("tr")
+           Object.keys(row).forEach(key=>{
+             td = document.createElement("td")
+             td.innerText = row[key]
+             tr.appendChild(td)
+           })
+           table.appendChild(tr)
+         });
+         document.getElementById("data").appendChild(table)
+    }
+   
+   document.getElementById("form").onsubmit = async (e)=> {
+     e.preventDefault();
+     
+     let formValues = new FormData(e.target)
+     let result = await fetch("/proyectos", {
+       method: "POST",
+       headers: {
+         "Content-Type":"application/json"
+       },
+       body: JSON.stringify({
+          EmpleadoID: formValues.get("EmpleadoID"),
+          Nombre: formValues.get("Nombre"),
+          EstadoProyecto: formValues.get("EstadoProyecto"),
+       })
+     })
+     crearTablaFormaInsegura() 
+   }
+  </script>
 </body>
 </html>
