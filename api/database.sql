@@ -25,11 +25,14 @@ CREATE TABLE Donaciones (
 -- Tabla de Proyectos
 CREATE TABLE Proyectos (
     ProyectoID INT IDENTITY(1,1) PRIMARY KEY,
+	NombreProyecto VARCHAR(255),
+	DescripcionProyecto VARCHAR(255),
     EmpleadoID INT,
     NombreEmpleado VARCHAR(255),
 	ApellidoEmpleado VARCHAR(255),
 	MetaTotal MONEY,
     EstadoProyecto VARCHAR(50),
+	DocumentoSoporte VARBINARY(MAX)
     FOREIGN KEY (EmpleadoID) REFERENCES Usuarios(UsuarioID)
 );
 
@@ -57,3 +60,10 @@ CREATE TABLE Notificaciones (
     EventoImportante VARCHAR(255),
     FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)
 );
+
+SELECT * FROM DashboardDonaciones
+SELECT * FROM DocumentosSoporte
+SELECT * FROM Donaciones
+SELECT * FROM Notificaciones
+SELECT * FROM Proyectos
+SELECT * FROM Usuarios

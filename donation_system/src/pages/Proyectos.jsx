@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
 export const Proyectos = () => {
-    const ENDPOINT = "http://localhost:4000/proyectos";
+    const ENDPOINT = "http://localhost:4000/api/v1/proyectos";
 
     const [proyectos, setProyectos] = useState([])
     const dialogRef = useRef(null)
@@ -24,18 +24,17 @@ export const Proyectos = () => {
     }
 
     useEffect(() => {
-        //useEffect vacio, significa que lo va ejecutar cuando se cargue el componente en memoria.
         (async () => {
             await getAll()
         })()
       }, [])
 
-    const newDonacionClick = (e) => {
+    const newProyectoClick = (e) => {
         e.preventDefault()
         dialogRef.current.showModal()
     }
 
-    const closeNewDonacionModal = (e) => {
+    const closeNewProyectoModal = (e) => {
         e.preventDefault()
         dialogRef.current.close()
     }
@@ -121,6 +120,35 @@ export const Proyectos = () => {
         dialogRef.current.showModal();
     }
 
+    const uploadFile = (project, file) => {
+        if (file) {
+          const formData = new FormData();
+          formData.append("archivo", file);
+      
+          fetch(`${ENDPOINT}/${project.ProyectoID}/cargar-archivo`, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then(() => {
+              alert("Archivo cargado con éxito.");
+              getAll();
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("Error al cargar el archivo.");
+            });
+        }
+      };
+      
+    const openFileUploadDialog = (project) => {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".pdf,.doc,.docx,.jpg,.png"; // Define los tipos de archivos permitidos
+        fileInput.onchange = (e) => uploadFile(project, e.target.files[0]);
+        fileInput.click();
+      };
+
     return (
         <>
             <dialog ref={dialogRef}>
@@ -183,7 +211,7 @@ export const Proyectos = () => {
                 <label htmlFor='estadoProyecto'>Estado</label>
                     <select
                         className='w3-select'
-                        name="EstadoProyecto" // Asegúrate de que coincida con el nombre en currentProyecto
+                        name="EstadoProyecto" 
                         id="estadoProyecto"
                         value={currentProyecto.EstadoProyecto}
                         onChange={valueHasChanged}
@@ -197,29 +225,29 @@ export const Proyectos = () => {
                     <button type="submit" className="w3-button w3-green">Guardar</button>         
                     </div>
                     <div className="w3-col m4">
-                    <button className="w3-button w3-red" onClick={closeNewDonacionModal}>Cerrar</button>
+                    <button className="w3-button w3-red" onClick={closeNewProyectoModal}>Cerrar</button>
                     </div>
                 </div>
                 </form>
             </dialog>
-            <button onClick={newDonacionClick}>Nuevo Proyecto</button>
+            <button onClick={newProyectoClick}>Nuevo Proyecto</button>
             <h1>Proyectos</h1>
             <table className="w3-table w3-striped w3-bordered w3-border">
                 <thead>
                 <tr>
-                    <th>ProyectoID</th>
-                    <th>NombreProyecto</th>
-                    <th>DescripcionProyecto</th>
-                    <th>EmpleadoID</th>
-                    <th>NombreEmpleado</th>
-                    <th>ApellidoEmpleado</th>
-                    <th>MetaTotal</th>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Empleado ID</th>
+                    <th>Nombre empleado</th>
+                    <th>Apellido empleado</th>
+                    <th>Meta Total</th>
                     <th>Estado</th>
                 </tr>
                 </thead>
                 <tbody>
                 {proyectos.map((row) => (
-                    <tr key={'donacion' + row.id} style={{backgroundColor: row.EstadoProyecto === "I" ? "olive": ""}}>
+                    <tr key={'proyecto' + row.id} style={{backgroundColor: row.EstadoProyecto === "I" ? "olive": ""}}>
                     <td>{row.ProyectoID}</td>
                     <td>{row.NombreProyecto}</td>
                     <td>{row.DescripcionProyecto}</td>
@@ -231,6 +259,7 @@ export const Proyectos = () => {
                     <td>
                         <button className="w3-button w3-yellow" onClick = {(e) => { showEdit(row) }}>Editar</button>
                         <button className="w3-button w3-red" onClick = {(e)=> {deleteRow(row)}}>Borrar</button>
+                        <button className="w3-button w3-blue" onClick = {(e)=> {openFileUploadDialog(row)}}>Documentos de Soporte</button>
                     </td>
                     </tr>
                 ))}
