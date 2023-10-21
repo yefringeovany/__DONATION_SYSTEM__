@@ -8,11 +8,7 @@ const Proyectos = require('../model/proyectosModel')
 
 router.get('/', async (req, res) => {
     const proyecto = await Proyectos.findAll()
-    res.status(200).json({
-      ok: true,
-      status: 200,
-      body: proyecto
-    })
+    res.status(200).json(proyecto)
   });
 
 router.get('/:id', async (req, res) => {
@@ -22,11 +18,7 @@ router.get('/:id', async (req, res) => {
         proyectoID: id
       }
     })
-    res.status(200).json({
-      ok: true,
-      status: 200,
-      body: proyecto
-    })
+    res.status(200).json(proyecto)
 });
 
 router.post("/", async (req, res) => {
@@ -41,10 +33,7 @@ router.post("/", async (req, res) => {
     MetaTotal: dataProyectos.MetaTotal,
     EstadoProyecto: dataProyectos.EstadoProyecto
   })
-  res.status(201).json({
-    ok: true,
-    status: 201
-  })
+  res.status(201).json(createProyecto)
 });
 
 router.put('/:id', async (req, res) => {
@@ -63,11 +52,7 @@ router.put('/:id', async (req, res) => {
       proyectoID: id
     }
   })
-  res.status(200).json({
-    ok: true,
-    status: 200,
-    body: updateProyecto
-  })
+  res.status(200).json(updateProyecto)
 });
 
 router.delete('/:id', async (req, res) => {
@@ -77,11 +62,7 @@ router.delete('/:id', async (req, res) => {
       proyectoID: id
     }
   })
-  res.status(204).json({
-    ok: true,
-    status: 204,
-    body: deleteProyecto
-  })
+  res.status(200).json(deleteProyecto)
 });
 
 const storage = multer.memoryStorage(); // Almacenar el archivo en memoria
@@ -101,8 +82,52 @@ router.post('/:id/cargar-archivo', upload.single('archivo'), async (req, res, ne
     res.status(200);
   } catch (err) {
     console.error(err);
-    res.statusCode = 500; // Internal server error
+    res.statusCode = 500; 
     res.send(err);
+  }
+});
+
+router.get('/:id/documentos-soporte', async (req, res) => {
+  const proyectoID = req.params.id;
+  
+  try {
+      const connection = await sql.connect(config);
+      const result = await connection
+          .request()
+          .input("ProyectoID", sql.Int, proyectoID)
+          .query("SELECT DocumentoSoporte FROM Proyectos WHERE ProyectoID = @ProyectoID AND DocumentoSoporte IS NOT NULL");
+      
+      if (result.recordset.length > 0) {
+          res.status(200).json(result.recordset);
+      } else {
+          res.status(204).send("No se encontraron archivos de soporte para el proyecto.");
+      }
+  } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
+  }
+});
+
+router.get('/:id/ver-archivo', async (req, res) => {
+  const proyectoID = req.params.id;
+
+  try {
+      const connection = await sql.connect(config);
+      const result = await connection
+          .request()
+          .input("ProyectoID", sql.Int, proyectoID)
+          .query("SELECT DocumentoSoporte FROM Proyectos WHERE ProyectoID = @ProyectoID AND DocumentoSoporte IS NOT NULL");
+      
+      if (result.recordset.length > 0) {
+          const documentoSoporte = result.recordset[0].DocumentoSoporte;
+          res.setHeader('Content-Type', 'application/pdf'); // Puedes ajustar el tipo de contenido según el tipo de archivo.
+          res.send(documentoSoporte);
+      } else {
+          res.status(204).send("No se encontraron archivos de soporte para el proyecto.");
+      }
+  } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
   }
 });
 
