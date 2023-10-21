@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import {Layout} from './pages/Layout'
-import {Proyectos} from './pages/Proyectos'
+import { Layout } from './pages/Layout'
+import { Proyectos} from './pages/Proyectos'
 import "./App.css"
 
 function App() {
