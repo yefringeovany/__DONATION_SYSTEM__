@@ -9,9 +9,9 @@ const sequelize = new Sequelize({
     database: 'SistemaDonaciones',
   });
 
-  class Usuario extends Model {}
+  class Usuarios extends Model {}
 
-  Usuario.init(
+  Usuarios.init(
     {
       UsuarioID: {
         type: DataTypes.INTEGER,
@@ -48,7 +48,7 @@ const sequelize = new Sequelize({
     }
   );
 
-  module.exports = Usuario;
+  module.exports = Usuarios;
 
 async function testConnection() {
     try {
