@@ -1,8 +1,8 @@
 const config = {
-    server: "DESKTOP-MFTH7BM\\EXAMPLE_SQL",
-    user: "sa",
-    password:"1234",
-    database: "SistemaDonaciones",
+    server: process.env.SERVER,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
     options: {
         trustServerCertificate: true
     }

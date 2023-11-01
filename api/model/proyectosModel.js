@@ -57,7 +57,7 @@ class Proyectos extends Model {}
   
   module.exports = Proyectos;
 
-async function testConnection() {
+/*async function testConnection() {
     try {
         await sequelize.authenticate()
         console.log("All Good!")
@@ -66,4 +66,4 @@ async function testConnection() {
     }
 } 
 
-testConnection();
+testConnection();*/
