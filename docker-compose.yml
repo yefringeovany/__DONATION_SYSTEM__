@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+    container_name: db-sqlserver
+    restart: always
+    env_file: ./.env
+    ports:
+      - '1433:1433'
+    volumes:
+      - sql-server-data:/var/opt/mssql/
+      - sqldata:/var/opt/sqlserver/data
+      - sqllog:/var/opt/sqlserver/log
+      - sqlbackup:/var/opt/sqlserver/backup
+      - /c/docker/shared:/usr/shared
+    networks:
+      - backend
+
+  api:
+  
+    image: backendapp
+    build:
+      context: ./api
+    ports:
+      - "$NODE_LOCAL_PORT:$NODE_DOCKER_PORT"
+    env_file:
+      - ./.env
+    depends_on:
+      - db  # Asegúrate de que coincida con el nombre de tu servicio de SQL Server
+    networks:
+      - backend
+      - frontend
+
+  ui:
+    image: uiapp
+    env_file: ./.env
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_API_BASE_URL=$CLIENT_API_BASE_URL
+    ports:
+      - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
+    networks:
+      - frontend  
+
+volumes: 
+  db:
+  sql-server-data:
+    driver: local
+  sqldata:
+  sqllog:
+  sqlbackup:
+
+networks:
+  backend:
+  frontend:
