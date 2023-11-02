@@ -27,6 +27,7 @@ const sequelize = new Sequelize({
       Email: {
         type: DataTypes.STRING,
         unique: true,
+        allowNull: false,
       },
       PasswordHash: {
         type: DataTypes.STRING,
@@ -39,6 +40,12 @@ const sequelize = new Sequelize({
       },
       Activo: {
         type: DataTypes.BOOLEAN,
+      },
+      Token: {
+        type: DataTypes.STRING,
+      },
+      UltimoEmailEnviado: {
+        type: DataTypes.DATE,
       },
     },
     {

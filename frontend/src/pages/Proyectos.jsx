@@ -1,8 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import { API_ENDPOINT } from "../../config/consts";
 
 export const Proyectos = () => {
     const ENDPOINT = "http://localhost:4000/api/v1/proyectos";
+
+    const getToken = () => {
+        return sessionStorage.getItem("token");
+    };
 
     const [proyectos, setProyectos] = useState([])
     const dialogRef = useRef(null)
@@ -26,7 +29,22 @@ export const Proyectos = () => {
 
     useEffect(() => {
         (async () => {
-            await getAll()
+            try {
+                console.log(sessionStorage.getItem("token"));
+                const response = await fetch(ENDPOINT, {
+                    headers: {
+                        "Authorization": `Bearer ${getToken()}` // Cambia "x-access-token" a "Authorization"
+                      }
+                });
+                if(response.ok) {
+                    const data = await response.json();
+                    setProyectos(data);
+                } else {
+                    console.error("Error al obtener proyectos");
+                }
+            } catch (error) {
+                console.error(error);
+            }
         })()
       }, [])
 
@@ -73,7 +91,8 @@ export const Proyectos = () => {
         let fetchResp = await fetch(ENDPOINT, {
           method: "POST",
           headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${getToken()}`
           },
           body: JSON.stringify(data)
           })
@@ -85,7 +104,8 @@ export const Proyectos = () => {
         let fetchResp = await fetch(ENDPOINT + "/" + data.ProyectoID, {
           method: "PUT",
           headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${getToken()}`
           },
           body: JSON.stringify(data)
         });
@@ -103,7 +123,8 @@ export const Proyectos = () => {
         let fetchResp = await fetch(ENDPOINT + "/" + row.ProyectoID, {
           method: "DELETE",
           headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${getToken()}`
           }
         });
         let json = await fetchResp.json();

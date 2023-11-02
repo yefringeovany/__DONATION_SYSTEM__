@@ -6,7 +6,9 @@ CREATE TABLE Usuarios (
     Email VARCHAR(255) UNIQUE,
     PasswordHash VARCHAR(255),
     Rol VARCHAR(50) CHECK (Rol IN ('Empleado', 'Donador')),
-    Activo BIT
+    Activo BIT,
+    Token VARCHAR(255),
+    UltimoEmailEnviado DATE
 );
 
 -- Tabla de Donaciones

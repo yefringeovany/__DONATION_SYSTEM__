@@ -1,12 +1,14 @@
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
-import { Layout } from './pages/Layout';
+import { BrowserRouter, Routes, Route, NavLink  } from "react-router-dom";
 import { Proyectos } from './pages/Proyectos';
 import { Login } from './pages/Login';
 import { Usuarios } from './pages/Usuarios';
 import { Register } from './pages/Register';
+import { Logout } from './pages/Logout';
+
 import "./App.css";
 
 function App() {
+  
   return (
     <BrowserRouter>
       <nav>
@@ -23,6 +25,9 @@ function App() {
           <li>
             <NavLink to="/usuarios">Usuarios</NavLink>
           </li>
+          <li>
+            <NavLink to="/logout">Cerrar sesión</NavLink>
+          </li>
         </ul>
       </nav>
 
@@ -30,12 +35,12 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route path="proyectos" element={<Layout />}>
-          <Route index element={<Proyectos />} />
-        </Route>
+        <Route path="/proyectos" element={<Proyectos />} />
 
-        <Route path="usuarios" element={<Usuarios />} />
+        <Route path="/usuarios" element={<Usuarios />} />
 
+        <Route path="/logout" element={<Logout />} />
+    
         <Route path="*" element={<h2>No encontramos la página :p</h2>} />
       </Routes>
     </BrowserRouter>
