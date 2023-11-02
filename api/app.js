@@ -12,6 +12,7 @@ var proyectosRouter = require('./routes/proyectos');
 var usuariosRouter = require('./routes/usuarios');
 var loginRouter = require('./routes/usuarios_auth');
 var registerRouter = require('./routes/usuarios_reg');
+var donacionesRouter = require('./routes/donaciones');
 
 var app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/v1/proyectos', proyectosRouter);
 app.use('/api/v1/usuarios', usuariosRouter);
 app.use('/api/v1', loginRouter);
 app.use('/api/v1/register', registerRouter);
+app.use('/api/v1/donaciones', donacionesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
