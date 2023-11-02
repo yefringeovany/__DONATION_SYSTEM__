@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import  { useEffect, useState, useRef } from "react";
+import './Donaciones.css';
 
 export const Donaciones = () => {
-  const ENDPOINT = "http://localhost:4000/api/v1/proyectos"; // Cambiamos la ruta a proyectos
-  const DONACION_ENDPOINT = "http://localhost:4000/api/v1/donaciones"; // Ruta para las donaciones
+  const ENDPOINT = "http://localhost:4000/api/v1/proyectos";
+  const DONACION_ENDPOINT = "http://localhost:4000/api/v1/donaciones";
 
   const [proyectos, setProyectos] = useState([]);
   const [currentProyecto, setCurrentProyecto] = useState(null);
@@ -13,27 +14,26 @@ export const Donaciones = () => {
 
   const getToken = () => {
     return sessionStorage.getItem("token");
-};
+  };
 
   useEffect(() => {
     (async () => {
-        try {
-            console.log(sessionStorage.getItem("token"));
-            const response = await fetch(ENDPOINT, {
-                headers: {
-                    "Authorization": `Bearer ${getToken()}` // Cambia "x-access-token" a "Authorization"
-                  }
-            });
-            if(response.ok) {
-                const data = await response.json();
-                setProyectos(data);
-            } else {
-                console.error("Error al obtener proyectos");
-            }
-        } catch (error) {
-            console.error(error);
+      try {
+        const response = await fetch(ENDPOINT, {
+          headers: {
+            "Authorization": `Bearer ${getToken()}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setProyectos(data);
+        } else {
+          console.error("Error al obtener proyectos");
         }
-    }) ()
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, []);
 
   const handleDonarClick = (proyecto) => {
@@ -42,14 +42,14 @@ export const Donaciones = () => {
   };
 
   const confirmarDonacion = async () => {
-    if (montoDonacion <= 0 || isNaN(montoDonacion)) {
+    if (isNaN(montoDonacion) || parseFloat(montoDonacion) <= 0) {
       errorMessage.current.showModal();
       return;
     }
 
     const donacion = {
-      DonanteID: null, // Puedes dejarlo nulo
-      EmpleadoID: 1, // Dejarlo como 1
+      DonanteID: null,
+      EmpleadoID: 1,
       ProyectoID: currentProyecto.ProyectoID,
       FechaDonacion: new Date(),
       Monto: parseFloat(montoDonacion),
@@ -62,16 +62,16 @@ export const Donaciones = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${getToken()}`
         },
         body: JSON.stringify(donacion),
       });
 
       if (response.ok) {
         successMessage.current.showModal();
-        // Recargar la página automáticamente después de mostrar el mensaje de éxito
         setTimeout(() => {
           window.location.reload();
-        }, 2000); // Recargar después de 2 segundos
+        }, 2000);
       } else {
         errorMessage.current.showModal();
       }
@@ -82,8 +82,6 @@ export const Donaciones = () => {
   };
 
   const generarBoletaDeposito = () => {
-    // Puedes implementar lógica para generar una BoletaDeposito única
-    // Esto es solo un ejemplo
     return "BD-" + Math.floor(Math.random() * 10000);
   };
 
