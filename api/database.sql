@@ -12,16 +12,18 @@ CREATE TABLE Usuarios (
 );
 
 -- Tabla de Donaciones
-CREATE TABLE Donaciones (
+CREATE TABLE Donaciones(
     DonacionID INT IDENTITY(1,1) PRIMARY KEY,
     DonanteID INT, -- Clave foránea a Usuarios
     EmpleadoID INT, -- Clave foránea a Usuarios
+    ProyectoID INT, -- Nueva clave foránea a Proyectos
     FechaDonacion DATETIME,
     Monto DECIMAL(10, 2),
     BoletaDeposito VARCHAR(255),
     Estado VARCHAR(50),
     FOREIGN KEY (DonanteID) REFERENCES Usuarios(UsuarioID),
-    FOREIGN KEY (EmpleadoID) REFERENCES Usuarios(UsuarioID)
+    FOREIGN KEY (EmpleadoID) REFERENCES Usuarios(UsuarioID),
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID)
 );
 
 -- Tabla de Proyectos
@@ -63,9 +65,3 @@ CREATE TABLE Notificaciones (
     FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)
 );
 
-SELECT * FROM DashboardDonaciones
-SELECT * FROM DocumentosSoporte
-SELECT * FROM Donaciones
-SELECT * FROM Notificaciones
-SELECT * FROM Proyectos
-SELECT * FROM Usuarios
