@@ -149,7 +149,7 @@ export const Proyectos = () => {
     
             fetch(`${ENDPOINT}/${project.ProyectoID}/cargar-archivo`, {
                 method: "POST",
-                body: formData,  // Usa el objeto FormData en lugar de JSON.stringify
+                body: formData,
             })
             .then((response) => {
                 if (response.ok) {
@@ -164,7 +164,7 @@ export const Proyectos = () => {
                 alert("Error al cargar el archivo.");
             });
         }
-    };
+    };    
       
     const openFileUploadDialog = (project) => {
         const fileInput = document.createElement("input");

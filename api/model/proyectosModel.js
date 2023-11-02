@@ -2,7 +2,7 @@ const { Sequelize, Model, DataTypes } = require("sequelize") //Importación de m
 
 const sequelize = new Sequelize({
     dialect: 'mssql',
-    host: 'CARLOSASUS',
+    host: 'DESKTOP-MFTH7BM\\EXAMPLE_SQL',
     port: 1433, // Puerto por defecto de SQL Server
     username: 'sa',
     password: '1234',

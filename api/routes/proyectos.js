@@ -7,14 +7,12 @@ const {config} = require("../config/sqlServer")
 const Proyectos = require('../model/proyectosModel')
 const verifyToken = require('../middlewares/verifyToken');
 
-router.use(verifyToken);
-
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     const proyecto = await Proyectos.findAll()
     res.status(200).json(proyecto)
   });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id
     const proyecto = await Proyectos.findOne({
       where: {
@@ -24,7 +22,7 @@ router.get('/:id', async (req, res) => {
     res.status(200).json(proyecto)
 });
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const dataProyectos = req.body
   await Proyectos.sync()
   const createProyecto = await Proyectos.create({
@@ -39,7 +37,7 @@ router.post("/", async (req, res) => {
   res.status(201).json(createProyecto)
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   const dataProyectos = req.body
   const id = req.params.id
   const updateProyecto = await Proyectos.update({
@@ -58,7 +56,7 @@ router.put('/:id', async (req, res) => {
   res.status(200).json(updateProyecto)
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   const id = req.params.id
   const deleteProyecto = await Proyectos.destroy({
     where: {
@@ -84,9 +82,9 @@ router.post('/:id/cargar-archivo', upload.single('archivo'), async (req, res, ne
       .query("UPDATE Proyectos SET DocumentoSoporte = @DocumentoSoporte WHERE ProyectoID = @ProyectoID");
     res.status(200);
   } catch (err) {
-    console.error(err);
-    res.statusCode = 500; 
-    res.send(err);
+      console.error(err);
+      res.statusCode = 500; 
+      res.send(err);
   }
 });
 
