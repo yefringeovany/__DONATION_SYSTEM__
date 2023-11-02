@@ -1,35 +1,55 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const Usuarios = require('../model/usuariosModel');
 
 router.post("/login", async (req, res) => {
-    const { Email, PasswordHash } = req.body;
+    try {
+        // Get user input
+        const { Email, PasswordHash } = req.body;
 
-    const usuario = await Usuarios.findOne({ 
-        where: { Email: Email } 
-    });
+        // Validate user input
+        if (!(Email && PasswordHash)) {
+            res.status(400).send("Todos los datos son requeridos");
+            return;
+        }
 
-    if (!usuario) {
-        return res.status(401).json({ 
-            message: "Correo o contraseña incorrecta" 
-        });
-    }
+        // Validate if user exists in your database
+        const usuario = await Usuarios.findOne({ where: { Email } });
 
-    const isPasswordValid = await bcrypt.compare(PasswordHash, usuario.PasswordHash);
+        if (!usuario) {
+            res.status(401).json({ message: "Correo o contraseña incorrecta" });
+            return;
+        }
 
-    if (isPasswordValid) {
-        // Guarda solo el UsuarioID en la sesión
-        req.session.UsuarioID = usuario.UsuarioID;
+        const isPasswordValid = await bcrypt.compare(PasswordHash, usuario.PasswordHash);
 
-        res.status(200).json({ 
-            UsuarioID: req.session.UsuarioID  // Devuelve el UsuarioID en la respuesta
-        });
-    } else {
-        res.status(401).json({ 
-            message: "Correo o contraseña incorrecta" 
-        });
+        if (isPasswordValid) {
+            // Create a token
+            const token = jwt.sign(
+                { user_id: usuario.UsuarioID, email: usuario.Email },
+                process.env.TOKEN_KEY,
+                { expiresIn: "2h" }
+            );
+
+            usuario.Token = token;
+
+            res.status(200).json({ 
+                UsuarioID: usuario.UsuarioID, 
+                Nombre: usuario.Nombre,
+                Apellido: usuario.Apellido,
+                Email: usuario.Email,
+                Rol: usuario.Rol,
+                Activo: usuario.Activo,
+                token });
+        } else {
+            res.status(401).json({ message: "Correo o contraseña incorrecta" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json();
     }
 });
 

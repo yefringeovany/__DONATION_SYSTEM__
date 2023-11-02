@@ -5,6 +5,9 @@ const multer = require('multer')
 const {config} = require("../config/sqlServer")
 
 const Proyectos = require('../model/proyectosModel')
+const verifyToken = require('../middlewares/verifyToken');
+
+router.use(verifyToken);
 
 router.get('/', async (req, res) => {
     const proyecto = await Proyectos.findAll()

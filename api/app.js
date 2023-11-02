@@ -16,19 +16,19 @@ var registerRouter = require('./routes/usuarios_reg');
 var app = express();
 
 app.use(session({
-  secret: process.env.SECRET,
+  secret: process.env.TOKEN_KEY,
   resave: false,
   saveUninitialized: true
 }))
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set("view engine", "ejs")
 
 var corsOptions = {
   origin: process.env.FRONTEND_DOMAIN, //Colocar dominio de Digital Ocean
   credentials: true
 }
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set("view engine", "ejs")
 
 //Middlewares.
 app.use(cors(corsOptions))
@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Routes
 app.use('/', indexRouter);
 app.use('/api/v1/proyectos', proyectosRouter);
 app.use('/api/v1/usuarios', usuariosRouter);
