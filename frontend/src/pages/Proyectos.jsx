@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-
 export const Proyectos = () => {
     const ENDPOINT = "http://localhost:4000/api/v1/proyectos";
 

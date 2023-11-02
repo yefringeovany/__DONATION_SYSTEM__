@@ -103,3 +103,5 @@ export const Usuarios = () => {
     </div>
   );
 };
+
+export default Usuarios;
