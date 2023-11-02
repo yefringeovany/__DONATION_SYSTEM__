@@ -2,7 +2,7 @@ const { Sequelize, Model, DataTypes } = require("sequelize")
 
 const sequelize = new Sequelize({
     dialect: 'mssql',
-    host: 'DESKTOP-MFTH7BM\\EXAMPLE_SQL',
+    host: 'CARLOSASUS',
     port: 1433, // Puerto por defecto de SQL Server
     username: 'sa',
     password: '1234',

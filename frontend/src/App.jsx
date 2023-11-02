@@ -4,6 +4,7 @@ import { Proyectos } from './pages/Proyectos';
 import { Login } from './pages/Login';
 import { Usuarios } from './pages/Usuarios';
 import { Register } from './pages/Register';
+import { Donaciones } from './pages/Donaciones';
 import "./App.css";
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
           <li>
             <NavLink to="/usuarios">Usuarios</NavLink>
           </li>
+          <li>
+            <NavLink to="/donaciones">Donaciones</NavLink>
+          </li>
         </ul>
       </nav>
 
@@ -35,6 +39,8 @@ function App() {
         </Route>
 
         <Route path="usuarios" element={<Usuarios />} />
+
+        <Route path="donaciones" element={<Donaciones />} />
 
         <Route path="*" element={<h2>No encontramos la página :p</h2>} />
       </Routes>
