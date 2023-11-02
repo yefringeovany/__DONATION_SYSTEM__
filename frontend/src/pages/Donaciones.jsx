@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react";
+import './Donaciones.css';
+
 
 
 export const Donaciones = () => {
