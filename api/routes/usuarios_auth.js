@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const Usuarios = require('../model/usuariosModel');
+const { default: helmet } = require('helmet');
+
+router.use(helmet())
 
 router.post("/login", async (req, res) => {
     try {
